@@ -19,49 +19,60 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class OrderStepDefinition {
+
+public class OrderStepDefinition extends  BaseStepDefinition{
 	
-	WebDriver driver;
-	
-	@Before
-	public void setup()
-	{
-		System.setProperty("webdriver.chrome.driver", "C:\\Users\\nikhi\\DemoBDD\\DemoBDD\\src\\test\\resources\\Drivers\\chromedriver.exe");
-		driver= new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-		driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-		
-		
-	}
+
+
 	
 	
 @Given("^Navigate to Givconnect Portal Home Page$")
 public void navigate_to_Givconnect_Portal_Home_Page() throws InterruptedException {
-
+	System.out.println("CurrentThread is: "+ Thread.currentThread().getName());
 	
-	driver.navigate().to("https://givaudan-pegasus--uat.sandbox.my.site.com/store/s/");
-	String title= driver.getTitle();
+	driver.get().navigate().to("https://givaudan-pegasus--uat.sandbox.my.site.com/store/s/");
+	String title= driver.get().getTitle();
 	System.out.println(title);
 	
 
-	WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+	WebDriverWait wait = new WebDriverWait(driver.get(), Duration.ofSeconds(30));
 	wait.until( ExpectedConditions.visibilityOfElementLocated(By.xpath("//input")));
-	WebElement login = driver.findElement(By.xpath("//input"));
-	login.sendKeys("nikhil.patil@givaudan.com");
-	WebElement submit = driver.findElement(By.xpath("//button[@title='Send']"));
+	WebElement login = driver.get().findElement(By.xpath("//input"));
+	login.sendKeys(  this.scenariocontext.get().getContext("Email").toString() );
+	WebElement submit = driver.get().findElement(By.xpath("//button[@title='Send']"));
 	submit.click();
 	
 	
 		
-	Thread.sleep(20000);
+	//Thread.sleep(20000);
 	System.out.println("Inside step1");
  
 }
 
 
 
+
+
+
+@Given("^Initialize data1$")
+public void Initialize_Data() throws InterruptedException {
+
+	System.out.println("CurrentThread is: "+ Thread.currentThread().getName());
+	this.scenariocontext.get().setContext("Email","abc@abc.com");
+}
+
+
+
+@Given("^Initialize data2$")
+public void Initialize_Data2() throws InterruptedException {
+	System.out.println("CurrentThread is: "+ Thread.currentThread().getName());
+	
+	this.scenariocontext.get().setContext("Email","xyz@xyz.com");
+}
+
+/*
 @Given("^Navigate to Givconnect Product Page$")
 public void navigate_to_Givconnect_Product_Page() {
 	
@@ -116,7 +127,7 @@ public void navigate_to_Cart() throws InterruptedException{
 	Thread.sleep(5000);
 
 	js.executeScript("$x('//a')[21].click();");
-*/	
+	
 	
 }
 
@@ -236,10 +247,12 @@ public void view_order_details() {
  
 }
 
+*/
+
 @After
 public void tear_down()
 {
-	driver.quit();
+	driver.get().quit();
 }
 
 
